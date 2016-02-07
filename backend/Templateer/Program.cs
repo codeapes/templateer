@@ -1,36 +1,49 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NetMQ;
-using NetMQ.Sockets;
 
 namespace CodeApes.Templateer
 {
 	public class Program
 	{
+        private const string ServerAddress = "tcp://127.0.0.1:5556";
+        private const bool verbose = true;
+        private const string Unrecognized = "¡UNRECOGNIZED¡";
+        
 		public static void Main(string[] args)
-		{
-            const string serverAddress = "@tcp://localhost:5556";
-            
-            using (var server = new NetMQ.Sockets.ResponseSocket(serverAddress)) // bind
-            using (var client = new RequestSocket(">tcp://localhost:5556"))  // connect
+		{            
+            using (NetMQContext ctx = NetMQContext.Create())
+            using (NetMQSocket serverSocket = ctx.CreateResponseSocket())
             {
-                // Send a message from the client socket
-                client.SendFrame("Hello");
+                serverSocket.Bind(ServerAddress);
 
-                // Receive the message from the server socket
-                string m1 = server.ReceiveFrameString();
-                Console.WriteLine("From Client: {0}", m1);
-
-                // Send a response back from the server
-                server.SendFrame("Hi Back");
-
-                // Receive the response from the client socket
-                string m2 = client.ReceiveFrameString();
-                Console.WriteLine("From Server: {0}", m2);
+                while (true)
+                {
+                    HandleMessages(serverSocket, verbose);
+                }
             }
 		}
-	}
+
+        private static void HandleMessages(NetMQSocket serverSocket, bool verbose)
+        {
+            string message = serverSocket.ReceiveFrameString();
+            var reply = HandleMessage(message);
+            reply.SendOver(serverSocket);
+        }
+        
+        private static ReplyAction HandleMessage(string message)
+        {
+            if (message == "dummy")
+            {
+                return new ReplyAction("public class Dummy { }");
+            }
+            else if (message == "exit")
+            {
+                return new ReplyAction("exiting", () => { System.Threading.Thread.Sleep(1); Environment.Exit(0); } );
+            }
+            else
+            {
+                return new ReplyAction(Unrecognized);
+            }
+        }
+    }
 }

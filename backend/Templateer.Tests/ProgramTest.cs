@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace Templateer.Tests
+namespace CodeApes.Templateer.Tests
 {
     [TestFixture]
     public class ProgramTest
