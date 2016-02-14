@@ -53,11 +53,23 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IBackend.cs" />
+    <Compile Include="Backend.cs" />
+    <Compile Include="BackendStatus.cs" />
+    <Compile Include="MessageHandlers\IMessageHandler.cs" />
+    <Compile Include="MessageHandlers\MessageHandler.cs" />
+    <Compile Include="MessageHandlers\StringMessageHandler.cs" />
+    <Compile Include="MessageHandlers\JsonMessageHandler.cs" />            
     <Compile Include="Program.cs" />
-    <Compile Include="ReplyAction.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\ExitCommand.cs" />
+    <Compile Include="Commands\TemplateRequestCommand.cs" />
+    <Compile Include="Commands\UnrecognizedCommand.cs" />
+    <Compile Include="NetMQ\NetMqWrapper.cs" />    
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
